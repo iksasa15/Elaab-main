@@ -183,26 +183,38 @@
             opacity: 1;
         }
 
+        /* تعديل: إزالة الخلفية السوداء من وراء النص في البانر */
         .banner-content {
             max-width: 800px;
             padding: 20px;
-            background-color: rgba(0, 0, 0, 0.5);
+            background-color: transparent;
+            /* تم تغييرها من rgba(0, 0, 0, 0.5) */
             border-radius: 10px;
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
+            backdrop-filter: none;
+            /* تم تغييرها من blur(5px) */
+            -webkit-backdrop-filter: none;
+            /* تم تغييرها من blur(5px) */
         }
 
         .banner-title {
             font-size: 3rem;
             font-weight: 700;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9),
+                -1px -1px 0 #000,
+                1px -1px 0 #000,
+                -1px 1px 0 #000,
+                1px 1px 0 #000;
         }
 
         .banner-description {
             font-size: 1.2rem;
             margin-bottom: 20px;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9),
+                -1px -1px 0 #000,
+                1px -1px 0 #000,
+                -1px 1px 0 #000,
+                1px 1px 0 #000;
         }
 
         .banner-carousel-indicators {
@@ -341,15 +353,8 @@
                     </ul>
                 </div>
 
-                <div class="footer-links">
-                    <h4>Support</h4>
-                    <ul>
-                        <li><a href="#">FAQ</a></li>
-                        <li><a href="#">Privacy Policy</a></li>
-                        <li><a href="#">Terms of Service</a></li>
-                        <li><a href="#">Help Center</a></li>
-                    </ul>
-                </div>
+                <!-- تم حذف قسم Support بالكامل من هنا -->
+
             </div>
 
             <div class="footer-bottom">
