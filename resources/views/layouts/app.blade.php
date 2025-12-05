@@ -5,6 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('favicon-16x16.png') }}">
+    <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">
+    <meta name="theme-color" content="#1e1e2c">
+
     <title>{{ $title ?? 'El3bha | Game Rental Platform' }}</title>
 
     <!-- Stylesheets -->
@@ -315,9 +323,10 @@
             <div class="footer-container">
                 <div class="footer-about">
                     <a href="{{ route('home') }}" class="footer-logo">
-                        <img src="" alt="">
+                        <img src="https://c.top4top.io/p_3626qoy0p1.png" alt="El3bha Logo">
                     </a>
-                    <p class="footer-description"></p>
+                    <p class="footer-description">El3bha is your premier destination for game rentals. Enjoy the latest
+                        titles without the commitment of a purchase.</p>
 
                     <div class="footer-social">
                         <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
@@ -353,9 +362,6 @@
                         @endif
                     </ul>
                 </div>
-
-                <!-- تم حذف قسم Support بالكامل من هنا -->
-
             </div>
 
             <div class="footer-bottom">
