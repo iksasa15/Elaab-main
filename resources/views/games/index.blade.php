@@ -3,6 +3,7 @@
 @section('title', 'All Games - El3bha')
 
 @section('content')
+    <!-- Header section with gradient background -->
     <div class="games-header">
         <div class="container">
             <div class="games-header-content">
@@ -13,6 +14,7 @@
     </div>
 
     <div class="container">
+        <!-- Filter and sort bar -->
         <div class="games-filter-bar">
             <div class="filter-section">
                 <div class="filter-title">Filter by Category:</div>
@@ -44,6 +46,7 @@
             </div>
         </div>
 
+        <!-- Games grid -->
         <div class="games-grid">
             @if($games->count() > 0)
                 @foreach($games as $game)
@@ -73,8 +76,59 @@
             @endif
         </div>
 
+        <!-- Pagination section - IMPROVED DESIGN -->
         <div class="pagination-container">
-            {{ $games->appends(request()->except('page'))->links() }}
+            <div class="pagination-wrapper">
+                <div class="pagination-nav">
+                    <!-- السابق والمعلومات والتالي -->
+                    <div class="nav-buttons">
+                        @if ($games->onFirstPage())
+                            <span class="nav-prev disabled">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                Previous
+                            </span>
+                        @else
+                            <a href="{{ $games->previousPageUrl() }}" class="nav-prev">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                Previous
+                            </a>
+                        @endif
+                        
+                        <div class="pagination-info">
+                            Showing {{ $games->firstItem() ?? 0 }} to {{ $games->lastItem() ?? 0 }} of {{ $games->total() }} results
+                        </div>
+                        
+                        @if ($games->hasMorePages())
+                            <a href="{{ $games->nextPageUrl() }}" class="nav-next">
+                                Next
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M9 6L15 12L9 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </a>
+                        @else
+                            <span class="nav-next disabled">
+                                Next
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M9 6L15 12L9 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </span>
+                        @endif
+                    </div>
+                </div>
+                
+                <!-- أرقام الصفحات -->
+                <div class="page-numbers">
+                    @for ($i = 1; $i <= $games->lastPage(); $i++)
+                        <a href="{{ $games->url($i) }}" class="page-number {{ $games->currentPage() == $i ? 'active' : '' }}">
+                            {{ $i }}
+                        </a>
+                    @endfor
+                </div>
+            </div>
         </div>
     </div>
 @endsection
@@ -89,6 +143,7 @@
         color: white;
         margin-bottom: 40px;
         clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
     }
 
     .games-header-content {
@@ -188,25 +243,59 @@
         margin-bottom: 40px;
     }
 
-    .game-actions {
-        margin-top: 15px;
-    }
-
-    .btn-view-details {
-        width: 100%;
-        padding: 8px;
-        background-color: var(--secondary-color);
-        color: white;
-        border: none;
+    .game-card {
+        background-color: var(--card-background);
         border-radius: var(--border-radius);
-        font-size: 14px;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        box-shadow: var(--card-shadow);
         cursor: pointer;
-        transition: all var(--transition-speed);
     }
 
-    .btn-view-details:hover {
-        background-color: var(--secondary-hover);
-        transform: translateY(-2px);
+    .game-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .game-image {
+        height: 180px;
+        background-size: cover;
+        background-position: center;
+        transition: transform 0.5s ease;
+    }
+
+    .game-card:hover .game-image {
+        transform: scale(1.05);
+    }
+
+    .game-info {
+        padding: 15px;
+    }
+
+    .game-title {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 10px;
+        color: var(--primary-text);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .game-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 10px;
+    }
+
+    .game-category {
+        color: var(--primary-color);
+        font-size: 14px;
+        background-color: rgba(108, 92, 231, 0.1);
+        padding: 5px 12px;
+        border-radius: 20px;
+        display: inline-block;
     }
 
     .game-platform {
@@ -215,6 +304,36 @@
         background-color: rgba(9, 132, 227, 0.1);
         padding: 5px 12px;
         border-radius: 20px;
+        display: inline-block;
+    }
+
+    .game-price {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin: 12px 0;
+    }
+
+    .game-actions {
+        margin-top: 15px;
+    }
+
+    .btn-view-details {
+        width: 100%;
+        padding: 10px;
+        background-color: var(--secondary-color);
+        color: white;
+        border: none;
+        border-radius: var(--border-radius);
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all var(--transition-speed);
+    }
+
+    .btn-view-details:hover {
+        background-color: var(--secondary-hover);
+        transform: translateY(-2px);
     }
 
     /* Empty state */
@@ -225,6 +344,7 @@
         padding: 60px 20px;
         border-radius: var(--border-radius);
         color: var(--secondary-text);
+        box-shadow: var(--card-shadow);
     }
 
     .no-games-icon {
@@ -239,57 +359,135 @@
         color: var(--primary-text);
     }
 
-    /* Pagination styles */
+    /* UPDATED PAGINATION STYLES */
     .pagination-container {
         margin: 40px 0;
+    }
+
+    .pagination-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+    }
+
+    .pagination-nav {
+        width: 100%;
+    }
+
+    .nav-buttons {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .nav-prev, .nav-next {
+        display: flex;
+        align-items: center;
+        font-size: 16px;
+        font-weight: 500;
+        color: #8C7DFF;
+        text-decoration: none;
+        padding: 10px;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+    }
+
+    .nav-prev svg, .nav-next svg {
+        width: 24px;
+        height: 24px;
+        stroke: currentColor;
+        stroke-width: 2;
+    }
+
+    .nav-prev svg {
+        margin-right: 8px;
+    }
+
+    .nav-next svg {
+        margin-left: 8px;
+    }
+
+    .nav-prev:hover, .nav-next:hover {
+        background-color: rgba(140, 125, 255, 0.1);
+    }
+
+    .nav-prev.disabled, .nav-next.disabled {
+        color: rgba(140, 125, 255, 0.5);
+        pointer-events: none;
+    }
+
+    .pagination-info {
+        font-size: 16px;
+        color: #B2B2CC;
+        text-align: center;
+    }
+
+    .page-numbers {
         display: flex;
         justify-content: center;
+        gap: 12px;
+        flex-wrap: wrap;
     }
 
-    .pagination {
-        display: flex;
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        gap: 5px;
-    }
-
-    .pagination li {
-        margin: 0 2px;
-    }
-
-    .pagination li a, .pagination li span {
+    .page-number {
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 40px;
+        min-width: 40px;
         height: 40px;
-        background-color: var(--card-background);
-        color: var(--secondary-text);
-        border-radius: 50%;
+        font-size: 16px;
+        font-weight: 500;
+        color: #8C7DFF;
         text-decoration: none;
-        transition: all var(--transition-speed);
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        padding: 0 10px;
+        background-color: #2A2A3D;
     }
 
-    .pagination li.active span {
-        background-color: var(--primary-color);
+    .page-number:hover {
+        background-color: #383859;
+        transform: translateY(-2px);
+    }
+
+    /* Updated Active Page Number */
+    .page-number.active {
+        background-color: #2F3CFF; /* أزرق داكن متناسق مع الخلفية الداكنة */
         color: white;
+        box-shadow: 0 0 15px rgba(47, 60, 255, 0.5);
+        transform: scale(1.05);
     }
 
-    .pagination li a:hover {
-        background-color: rgba(108, 92, 231, 0.2);
-        color: var(--primary-text);
+    /* Animation for pagination */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 
     /* Responsive adjustments */
+    @media (max-width: 992px) {
+        .games-grid {
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        }
+    }
+
     @media (max-width: 768px) {
         .games-filter-bar {
             flex-direction: column;
             align-items: flex-start;
         }
 
-        .sort-section {
+        .filter-section, .sort-section {
             width: 100%;
+        }
+
+        .sort-section {
             margin-top: 15px;
         }
 
@@ -303,6 +501,86 @@
 
         .games-title {
             font-size: 36px;
+        }
+
+        .games-subtitle {
+            font-size: 18px;
+        }
+
+        .filter-options {
+            margin-bottom: 15px;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .filter-option {
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        
+        .nav-buttons {
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .pagination-info {
+            order: -1;
+            margin-bottom: 10px;
+        }
+        
+        .page-number {
+            min-width: 36px;
+            height: 36px;
+            font-size: 15px;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .games-grid {
+            grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
+        }
+
+        .games-title {
+            font-size: 30px;
+        }
+
+        .games-header {
+            padding: 30px 0;
+        }
+
+        .game-card {
+            display: flex;
+            align-items: center;
+        }
+
+        .game-image {
+            width: 100px;
+            height: 100px;
+            flex-shrink: 0;
+        }
+
+        .game-info {
+            flex: 1;
+        }
+        
+        .nav-prev, .nav-next {
+            font-size: 14px;
+        }
+        
+        .pagination-info {
+            font-size: 14px;
+        }
+        
+        .page-numbers {
+            gap: 8px;
+        }
+        
+        .page-number {
+            min-width: 34px;
+            height: 34px;
+            font-size: 14px;
         }
     }
 </style>
