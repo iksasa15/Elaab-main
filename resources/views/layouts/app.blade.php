@@ -123,6 +123,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 15px;
         }
 
         #rent-now-button,
@@ -408,7 +409,7 @@
                         <button id="add-to-cart-button" class="btn btn-outline" onclick="addToCart()">
                             <i class="fas fa-cart-plus"></i> Add to Cart
                         </button>
-                        <button id="rent-now-button" class="btn btn-primary">
+                        <button id="rent-now-button" class="btn btn-primary" onclick="rentNow()">
                             <i class="fas fa-gamepad"></i> Rent Now
                         </button>
                     </div>
@@ -422,7 +423,7 @@
 
     <script>
         function addToCart() {
-            const gameId = document.getElementById('rent-now-button').getAttribute('data-game-id');
+            const gameId = document.getElementById('add-to-cart-button').getAttribute('data-game-id');
 
             fetch('{{ route("cart.add") }}', {
                 method: 'POST',
@@ -456,6 +457,51 @@
                 })
                 .catch(error => {
                     console.error('Error:', error);
+                });
+        }
+
+        // وظيفة جديدة لزر "Rent Now"
+        function rentNow() {
+            const gameId = document.getElementById('rent-now-button').getAttribute('data-game-id');
+
+            // أولاً: إضافة اللعبة إلى السلة
+            fetch('{{ route("cart.add") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({
+                    game_id: gameId
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // إذا نجحت العملية، قم بتحديث عداد السلة
+                        const cartCounter = document.getElementById('cart-counter');
+                        if (cartCounter) {
+                            cartCounter.textContent = data.count;
+                        }
+
+                        // أغلق النافذة المنبثقة
+                        closeGameModal();
+
+                        // إذا كان المستخدم غير مسجل دخول، انتقل إلى صفحة تسجيل الدخول
+                        if (data.redirect) {
+                            window.location.href = data.redirect;
+                        } else {
+                            // إذا كان المستخدم مسجل دخول، انتقل إلى صفحة السلة
+                            window.location.href = '{{ route("cart.index") }}';
+                        }
+                    } else {
+                        // إذا فشلت العملية، أظهر رسالة خطأ
+                        alert('Could not add game to cart. Please try again.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred. Please try again.');
                 });
         }
 
@@ -509,22 +555,29 @@
             // Store game ID for rental processing
             document.getElementById('rent-now-button').setAttribute('data-game-id', id);
             document.getElementById('rent-now-button').setAttribute('data-game-price', price);
+            document.getElementById('add-to-cart-button').setAttribute('data-game-id', id);
+            document.getElementById('add-to-cart-button').setAttribute('data-game-price', price);
         };
 
-        // Handle rental button click
-        document.getElementById('rent-now-button').addEventListener('click', function () {
-            const gameId = this.getAttribute('data-game-id');
-            const gamePrice = this.getAttribute('data-game-price');
-            const duration = document.querySelector('input[name="rental-duration"]:checked').value;
-            const durationText = document.querySelector('input[name="rental-duration"]:checked').closest('.duration-option').querySelector('.option-title').textContent;
-            const price = document.querySelector('input[name="rental-duration"]:checked').closest('.duration-option').querySelector('.option-price').textContent;
+        // إضافة معالج لزر الإغلاق (X) للتأكد من عمله بشكل صحيح
+        document.addEventListener('DOMContentLoaded', function () {
+            // إضافة معالج الحدث لزر X
+            const closeButton = document.querySelector('.close-modal');
+            if (closeButton) {
+                closeButton.addEventListener('click', function () {
+                    closeGameModal();
+                });
+            }
 
-            // Here you would typically send this data to the server
-            // For now, just show an alert
-            alert(`Game rental request submitted!\n\nGame ID: ${gameId}\nDuration: ${durationText}\nPrice: ${price}`);
-
-            // Close modal after submission
-            closeGameModal();
+            // إضافة معالج للنقر خارج المحتوى لإغلاق النافذة
+            const modal = document.getElementById('game-modal');
+            if (modal) {
+                modal.addEventListener('click', function (e) {
+                    if (e.target === this) {
+                        closeGameModal();
+                    }
+                });
+            }
         });
     </script>
 
