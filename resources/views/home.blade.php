@@ -103,6 +103,45 @@
 
 @section('styles')
     <style>
+        /* حذف كل الخلفيات تماماً */
+        .banner-content {
+            background: none !important;
+            padding: 0 !important;
+            box-shadow: none !important;
+            -webkit-backdrop-filter: none !important;
+            backdrop-filter: none !important;
+        }
+
+        /* إزالة أي خلفيات أو تأثيرات على العناصر الفرعية */
+        .banner-content::before,
+        .banner-content::after,
+        .banner-title::before,
+        .banner-title::after,
+        .banner-description::before,
+        .banner-description::after {
+            display: none !important;
+            background: none !important;
+            content: none !important;
+            box-shadow: none !important;
+            backdrop-filter: none !important;
+        }
+
+        /* تنسيق النص */
+        .banner-title,
+        .banner-description {
+            background: none !important;
+            box-shadow: none !important;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9),
+                -1px -1px 0 #000,
+                1px -1px 0 #000,
+                -1px 1px 0 #000,
+                1px 1px 0 #000;
+            padding: 0 !important;
+            margin: 10px 0 !important;
+        }
+
+        /* تنسيقات أخرى */
         .categories-filter-container {
             margin-bottom: 30px;
             display: flex;
@@ -145,6 +184,27 @@
         const slides = document.querySelectorAll('.banner-slide');
         const indicators = document.querySelectorAll('.carousel-indicator');
         const totalSlides = slides.length;
+
+        // إضافة كود JavaScript لإزالة أي خلفية تحت النص عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', function () {
+            // تأكد من إزالة أي عناصر أو خلفيات إضافية
+            document.querySelectorAll('.banner-content, .banner-title, .banner-description').forEach(elem => {
+                elem.style.background = 'none';
+                elem.style.backgroundColor = 'transparent';
+                elem.style.backdropFilter = 'none';
+                elem.style.webkitBackdropFilter = 'none';
+                elem.style.boxShadow = 'none';
+
+                // إزالة أي عناصر فرعية قد تكون مضافة
+                Array.from(elem.children).forEach(child => {
+                    if (child.tagName !== 'H2' &&
+                        child.tagName !== 'P' &&
+                        !child.classList.contains('btn')) {
+                        child.remove();
+                    }
+                });
+            });
+        });
 
         // Function to show specific slide
         function setSlide(slideIndex) {
